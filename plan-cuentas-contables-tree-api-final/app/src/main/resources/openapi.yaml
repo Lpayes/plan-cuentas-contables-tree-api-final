@@ -1,0 +1,128 @@
+openapi: 3.0.3
+
+info:
+  title: Plan de Cuentas Tree API
+  version: 1.0.0
+  description: API REST inicial para manejar un árbol de cuentas contables.
+
+servers:
+  - url: http://localhost:8081/api/v1
+    description: Servidor local
+
+tags:
+  - name: Tree
+    description: Operaciones básicas del árbol para Semana 1
+
+paths:
+
+  /nodes/root:
+    post:
+      tags:
+        - Tree
+      summary: Crear raíz del árbol
+      description: Crea el nodo raíz principal del árbol.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeRequest'
+            example:
+              name: Activo
+      responses:
+        '201':
+          description: Raíz creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+
+  /nodes/{parentId}/children:
+    post:
+      tags:
+        - Tree
+      summary: Agregar hijo a un nodo padre
+      description: Agrega un nodo hijo dentro de un nodo padre existente.
+      parameters:
+        - name: parentId
+          in: path
+          required: true
+          description: ID del nodo padre
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeRequest'
+            example:
+              name: Caja
+      responses:
+        '201':
+          description: Hijo creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '404':
+          description: Nodo padre no encontrado
+
+  /tree:
+    get:
+      tags:
+        - Tree
+      summary: Listar árbol
+      description: Lista la estructura actual del árbol en memoria.
+      responses:
+        '200':
+          description: Árbol listado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeNodeResponse'
+
+components:
+
+  schemas:
+
+    NodeRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Activo
+
+    NodeResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Activo
+        parentId:
+          type: integer
+          format: int64
+          nullable: true
+          example: null
+
+    TreeNodeResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Activo
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeNodeResponse'
