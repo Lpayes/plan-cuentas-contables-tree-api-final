@@ -1,0 +1,21 @@
+services:
+
+  postgres:
+    image: postgres:16
+
+    container_name: postgres-tree-db
+
+    environment:
+      POSTGRES_DB: plan_cuentas_tree_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/sql/schema-postgres.sql:/docker-entrypoint-initdb.d/schema-postgres.sql
+
+volumes:
+  postgres_data:
