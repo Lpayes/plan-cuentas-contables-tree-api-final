@@ -1,11 +1,18 @@
 package edu.umg.programacion3.pfinal.persistence.entity;
+import jakarta.persistence.*;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+@Entity
+@Table(name = "nodes")
 public class NodeEntity {
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@Column(nullable = false)
     private String name;
 
+	@Column(name = "parent_id")
     private Long parentId;
 
     public Long getId() {

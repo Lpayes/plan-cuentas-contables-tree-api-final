@@ -1,65 +1,101 @@
 package edu.umg.programacion3.pfinal.treeengine.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+// Ignora parent cuando Spring convierte a JSON
+@JsonIgnoreProperties({"parent"})
+
+// No mostrar valores null en JSON
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomTreeNode {
-	   private Long id;
-	    private String name;
-	    private CustomTreeNode parent;
-	    private CustomTreeNode[] children;
-	    private int childCount;
-	    
-	    public CustomTreeNode() {
-	        this.children = new CustomTreeNode[10];
-	        this.childCount = 0;
-	    }
-	    
-	    public void addChild(CustomTreeNode child) {
-	        if (childCount == children.length) {
-	            CustomTreeNode[] newChildren = new CustomTreeNode[children.length * 2];
 
-	            for (int i = 0; i < children.length; i++) {
-	                newChildren[i] = children[i];
-	            }
+    private Long id;
 
-	            children = newChildren;
-	        }
+    private String name;
 
-	        children[childCount] = child;
-	        childCount++;
-	    }
+    // Referencia al padre
+    private CustomTreeNode parent;
 
-		public Long getId() {
-			return id;
-		}
-		public CustomTreeNode[] getChildren() {
-			return children;
-		}
+    private CustomTreeNode[] children;
 
-		public void setChildren(CustomTreeNode[] children) {
-			this.children = children;
-		}
+    private int childCount;
 
-		public int getChildCount() {
-			return childCount;
-		}
+    public CustomTreeNode() {
 
-		public void setChildCount(int childCount) {
-			this.childCount = childCount;
-		}
+        this.children = new CustomTreeNode[10];
+        this.childCount = 0;
+    }
 
-		public void setId(Long id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public CustomTreeNode getParent() {
-			return parent;
-		}
-		public void setParent(CustomTreeNode parent) {
-			this.parent = parent;
-		}
+    public void addChild(CustomTreeNode child) {
 
+        if (childCount == children.length) {
+
+            CustomTreeNode[] newChildren =
+                    new CustomTreeNode[children.length * 2];
+
+            for (int i = 0; i < children.length; i++) {
+
+                newChildren[i] = children[i];
+            }
+
+            children = newChildren;
+        }
+
+        children[childCount] = child;
+        childCount++;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Ignorar parent para evitar recursión infinita
+    @JsonIgnore
+    public CustomTreeNode getParent() {
+        return parent;
+    }
+
+    public void setParent(CustomTreeNode parent) {
+        this.parent = parent;
+    }
+
+    // Devuelve solo hijos reales
+    public CustomTreeNode[] getChildren() {
+
+        CustomTreeNode[] realChildren =
+                new CustomTreeNode[childCount];
+
+        for (int i = 0; i < childCount; i++) {
+
+            realChildren[i] = children[i];
+        }
+
+        return realChildren;
+    }
+
+    public void setChildren(CustomTreeNode[] children) {
+        this.children = children;
+    }
+
+    public int getChildCount() {
+        return childCount;
+    }
+
+    public void setChildCount(int childCount) {
+        this.childCount = childCount;
+    }
 }
