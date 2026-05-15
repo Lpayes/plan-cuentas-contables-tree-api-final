@@ -1,5 +1,4 @@
-package
-edu.umg.programacion3.pfinal.treeengine.collections;
+package edu.umg.programacion3.pfinal.treeengine.collections;
 
 import edu.umg.programacion3.pfinal.treeengine.strategy.TreeAlgorithmStrategy;
 
@@ -13,6 +12,11 @@ public class CollectionsTreeStrategy implements TreeAlgorithmStrategy {
     @Override
     public void addChild(Long parentId, String name) {
         // Pendiente de implementar con collections Java
+    }
+    
+    @Override
+    public Object getTree() {
+        return null;
     }
 
     @Override
