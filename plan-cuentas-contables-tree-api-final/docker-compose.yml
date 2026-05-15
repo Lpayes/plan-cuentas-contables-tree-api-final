@@ -17,5 +17,17 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docs/sql/schema-postgres.sql:/docker-entrypoint-initdb.d/schema-postgres.sql
 
+  mongodb:
+    image: mongo:latest
+
+    container_name: tree-mongodb
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo_data:/data/db
+
 volumes:
   postgres_data:
+  mongo_data:
