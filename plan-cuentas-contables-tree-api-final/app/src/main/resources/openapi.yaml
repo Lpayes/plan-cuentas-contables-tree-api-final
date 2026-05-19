@@ -3,15 +3,15 @@ openapi: 3.0.3
 info:
   title: Plan de Cuentas Tree API
   version: 1.0.0
-  description: API REST inicial para manejar un árbol de cuentas contables.
+  description: API REST para gestionar un árbol de cuentas contables.
 
 servers:
-  - url: http://localhost:8081/api/v1
+  - url: http://localhost:8081
     description: Servidor local
 
 tags:
   - name: Tree
-    description: Operaciones básicas del árbol para Semana 1
+    description: Operaciones del árbol de cuentas contables
 
 paths:
 
@@ -19,8 +19,8 @@ paths:
     post:
       tags:
         - Tree
-      summary: Crear raíz del árbol
-      description: Crea el nodo raíz principal del árbol.
+      summary: Crear raíz
+      description: Crea el nodo raíz del árbol.
       requestBody:
         required: true
         content:
@@ -28,7 +28,7 @@ paths:
             schema:
               $ref: '#/components/schemas/NodeRequest'
             example:
-              name: Activo
+              name: "1 Activo"
       responses:
         '201':
           description: Raíz creada correctamente
@@ -41,8 +41,8 @@ paths:
     post:
       tags:
         - Tree
-      summary: Agregar hijo a un nodo padre
-      description: Agrega un nodo hijo dentro de un nodo padre existente.
+      summary: Agregar hijo
+      description: Agrega un nodo hijo a un nodo padre existente.
       parameters:
         - name: parentId
           in: path
@@ -58,7 +58,7 @@ paths:
             schema:
               $ref: '#/components/schemas/NodeRequest'
             example:
-              name: Caja
+              name: "1.1 Caja"
       responses:
         '201':
           description: Hijo creado correctamente
@@ -73,18 +73,168 @@ paths:
     get:
       tags:
         - Tree
-      summary: Listar árbol
-      description: Lista la estructura actual del árbol en memoria.
+      summary: Obtener árbol completo
+      description: Devuelve el árbol completo desde la raíz.
       responses:
         '200':
-          description: Árbol listado correctamente
+          description: Árbol completo obtenido correctamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TreeNodeResponse'
 
-components:
+  /tree/{nodeId}:
+    get:
+      tags:
+        - Tree
+      summary: Obtener subárbol
+      description: Devuelve el subárbol tomando como raíz el nodo indicado.
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: ID del nodo raíz del subárbol
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Subárbol obtenido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeNodeResponse'
+        '404':
+          description: Nodo no encontrado
 
+  /nodes/{nodeId}/path:
+    get:
+      tags:
+        - Tree
+      summary: Ruta desde raíz a un nodo
+      description: Devuelve la ruta desde la raíz hasta el nodo indicado.
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: ID del nodo destino
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Ruta obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListResponse'
+        '404':
+          description: Nodo no encontrado
+
+  /tree/traversal:
+    get:
+      tags:
+        - Tree
+      summary: Recorrido DFS o BFS
+      description: Devuelve el recorrido del árbol según el tipo indicado.
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: Tipo de recorrido
+          schema:
+            type: string
+            enum:
+              - DFS
+              - BFS
+            example: DFS
+      responses:
+        '200':
+          description: Recorrido obtenido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListResponse'
+        '400':
+          description: Tipo de recorrido inválido
+
+  /tree/height:
+    get:
+      tags:
+        - Tree
+      summary: Altura del árbol
+      description: Devuelve la altura total del árbol.
+      responses:
+        '200':
+          description: Altura obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NumberResponse'
+
+  /nodes/{nodeId}/depth:
+    get:
+      tags:
+        - Tree
+      summary: Profundidad de un nodo
+      description: Devuelve la profundidad del nodo desde la raíz.
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: ID del nodo
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Profundidad obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NumberResponse'
+        '404':
+          description: Nodo no encontrado
+
+  /nodes/{nodeId}/ancestors:
+    get:
+      tags:
+        - Tree
+      summary: Ancestros de un nodo
+      description: Devuelve los ancestros del nodo indicado.
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: ID del nodo
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Ancestros obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListResponse'
+        '404':
+          description: Nodo no encontrado
+
+  /tree/validate:
+    get:
+      tags:
+        - Tree
+      summary: Validar que no haya ciclos
+      description: Valida que el árbol no contenga ciclos.
+      responses:
+        '200':
+          description: Validación realizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+
+components:
   schemas:
 
     NodeRequest:
@@ -94,7 +244,7 @@ components:
       properties:
         name:
           type: string
-          example: Activo
+          example: "1 Activo"
 
     NodeResponse:
       type: object
@@ -105,7 +255,7 @@ components:
           example: 1
         name:
           type: string
-          example: Activo
+          example: "1 Activo"
         parentId:
           type: integer
           format: int64
@@ -121,8 +271,33 @@ components:
           example: 1
         name:
           type: string
-          example: Activo
+          example: "1 Activo"
         children:
           type: array
           items:
             $ref: '#/components/schemas/TreeNodeResponse'
+
+    NodeListResponse:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeResponse'
+
+    NumberResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+          example: 2
+
+    ValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "El árbol no contiene ciclos"
