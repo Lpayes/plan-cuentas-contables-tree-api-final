@@ -4,6 +4,21 @@ public interface TreeAlgorithmStrategy {
 	 void createRoot(String name);
 	 void addChild(Long parentId, String name);
 	 Object getTree();
-	 void printTree();
+	 
+	 Object getSubtree(Long nodeId);
+
+	 Object[] getPath(Long nodeId);
+
+	 Object[] traverseDFS();
+
+	 Object[] traverseBFS();
+
+	 int getHeight();
+
+	 int getDepth(Long nodeId);
+
+	 Object[] getAncestors(Long nodeId);
+
+	 boolean validateNoCycles();
 	 
 }
