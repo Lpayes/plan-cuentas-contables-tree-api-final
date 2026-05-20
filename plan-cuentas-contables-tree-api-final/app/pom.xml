@@ -9,14 +9,13 @@
   <artifactId>app</artifactId>
     <dependencies>
 
-        <!-- dependencia al motor -->
+
         <dependency>
             <groupId>edu.umg.programacion3.pfinal</groupId>
             <artifactId>tree-engine</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -43,6 +42,74 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-data-mongodb</artifactId>
          </dependency>
+         
+         <dependency>
+       	  <groupId>org.openapitools</groupId>
+          <artifactId>jackson-databind-nullable</artifactId>
+    	  <version>0.2.6</version>
+		  </dependency>
 
+		 <dependency>
+    	  <groupId>io.swagger.core.v3</groupId>
+    	  <artifactId>swagger-annotations-jakarta</artifactId>
+    	  <version>2.2.30</version>
+		 </dependency>
+                  
     </dependencies>
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>7.10.0</version>
+            <executions>
+                <execution>
+                    <id>generate-openapi-contract</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                    <configuration>
+                        <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
+                        <generatorName>spring</generatorName>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+
+                        <apiPackage>edu.umg.programacion3.pfinal.api.generated</apiPackage>
+                        <modelPackage>edu.umg.programacion3.pfinal.api.generated.model</modelPackage>
+
+                        <configOptions>
+                            <interfaceOnly>true</interfaceOnly>
+                            <useTags>true</useTags>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useJakartaEe>true</useJakartaEe>
+                            <skipDefaultInterface>true</skipDefaultInterface>
+                            <useResponseEntity>false</useResponseEntity>
+                            <dateLibrary>java8</dateLibrary>
+                        </configOptions>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+                <execution>
+                    <id>add-source</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>add-source</goal>
+                    </goals>
+                    <configuration>
+                        <sources>
+                            <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+                        </sources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>

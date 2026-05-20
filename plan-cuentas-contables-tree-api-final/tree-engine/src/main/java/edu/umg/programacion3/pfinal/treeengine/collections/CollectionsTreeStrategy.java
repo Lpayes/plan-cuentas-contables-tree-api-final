@@ -20,7 +20,42 @@ public class CollectionsTreeStrategy implements TreeAlgorithmStrategy {
     }
 
     @Override
-    public void printTree() {
-        // Pendiente de implementar con collections Java
+    public Object getSubtree(Long nodeId) {
+        return null;
+    }
+
+    @Override
+    public Object[] getPath(Long nodeId) {
+        return new Object[0];
+    }
+
+    @Override
+    public Object[] traverseDFS() {
+        return new Object[0];
+    }
+
+    @Override
+    public Object[] traverseBFS() {
+        return new Object[0];
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
+    @Override
+    public int getDepth(Long nodeId) {
+        return -1;
+    }
+
+    @Override
+    public Object[] getAncestors(Long nodeId) {
+        return new Object[0];
+    }
+
+    @Override
+    public boolean validateNoCycles() {
+        return true;
     }
 }
