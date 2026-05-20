@@ -14,6 +14,5 @@ public class MainTest {
         tree.addChild(1L, "Caja");
         tree.addChild(1L, "Bancos");
 
-        tree.printTree();
     }
 }
