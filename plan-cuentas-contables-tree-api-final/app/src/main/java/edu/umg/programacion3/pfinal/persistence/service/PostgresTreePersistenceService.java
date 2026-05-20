@@ -3,10 +3,12 @@ package edu.umg.programacion3.pfinal.persistence.service;
 import edu.umg.programacion3.pfinal.persistence.entity.NodeEntity;
 import edu.umg.programacion3.pfinal.persistence.repository.NodeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
 @Service
+@Profile("postgres")
 public class PostgresTreePersistenceService {
 
     private final NodeRepository nodeRepository;
