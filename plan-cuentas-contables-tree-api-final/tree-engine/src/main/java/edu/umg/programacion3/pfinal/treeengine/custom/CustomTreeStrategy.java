@@ -23,30 +23,46 @@ public class CustomTreeStrategy implements TreeAlgorithmStrategy {
     public Object getTree() {
         return repository.getTree();
     }
+    
+    @Override
+    public Object getSubtree(Long nodeId) {
+        return repository.getSubtree(nodeId);
+    }
 
     @Override
-    public void printTree() {
-        printNode(repository.getTree(), 0);
+    public Object[] getPath(Long nodeId) {
+        return repository.getPath(nodeId);
     }
 
-    // Recorre e imprime el árbol de forma recursiva
-    private void printNode(CustomTreeNode node, int level) {
-
-        if (node == null) {
-            return;
-        }
-
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
-        }
-
-        System.out.println(node.getName());
-
-        CustomTreeNode[] children = node.getChildren();
-
-        for (int i = 0; i < node.getChildCount(); i++) {
-
-            printNode(children[i], level + 1);
-        }
+    @Override
+    public Object[] traverseDFS() {
+        return repository.traverseDFS();
     }
+
+    @Override
+    public Object[] traverseBFS() {
+        return repository.traverseBFS();
+    }
+
+    @Override
+    public int getHeight() {
+        return repository.getHeight();
+    }
+
+    @Override
+    public int getDepth(Long nodeId) {
+        return repository.getDepth(nodeId);
+    }
+
+    @Override
+    public Object[] getAncestors(Long nodeId) {
+        return repository.getAncestors(nodeId);
+    }
+
+    @Override
+    public boolean validateNoCycles() {
+        return repository.validateNoCycles();
+    }
+
+  
 }
