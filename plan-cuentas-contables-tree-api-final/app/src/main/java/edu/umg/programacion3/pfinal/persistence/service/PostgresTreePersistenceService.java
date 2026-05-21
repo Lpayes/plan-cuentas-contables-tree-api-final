@@ -41,5 +41,20 @@ public class PostgresTreePersistenceService {
 
     public List<NodeEntity> getAllNodes() {
         return nodeRepository.findAll();
+    }            
+    
+    public NodeEntity getNodeById(Long id) {
+        return nodeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nodo no encontrado: " + id));
     }
-}
+    
+    public void deleteAllNodes() {
+        nodeRepository.deleteAll();
+    }   
+}   
+
+
+
+
+
+
