@@ -16,6 +16,11 @@ public class MongoNodeDocument {
     public MongoNodeDocument() {
     }
 
+    public MongoNodeDocument(String value, String parentId) {
+        this.value = value;
+        this.parentId = parentId;
+    }
+
     public MongoNodeDocument(String id, String value, String parentId) {
         this.id = id;
         this.value = value;
