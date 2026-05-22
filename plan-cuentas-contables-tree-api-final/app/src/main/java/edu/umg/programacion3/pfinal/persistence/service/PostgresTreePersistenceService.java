@@ -3,6 +3,7 @@ package edu.umg.programacion3.pfinal.persistence.service;
 import edu.umg.programacion3.pfinal.persistence.dto.PostgresTreeNodeDto;
 import edu.umg.programacion3.pfinal.persistence.entity.NodeEntity;
 import edu.umg.programacion3.pfinal.persistence.repository.NodeRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -13,7 +14,11 @@ import java.util.Map;
 
 @Service
 @Profile("postgres")
-public class PostgresTreePersistenceService {
+@ConditionalOnProperty(
+        name = "app.storage",
+        havingValue = "postgres"
+)
+public class PostgresTreePersistenceService implements TreePersistenceService {
 
     private final NodeRepository nodeRepository;
 
@@ -25,6 +30,7 @@ public class PostgresTreePersistenceService {
      * Crea el nodo raíz en PostgreSQL.
      * La raíz no tiene padre, por eso parentId = null.
      */
+    @Override
     public NodeEntity createRoot(String name) {
         NodeEntity root = new NodeEntity(name, null);
         return nodeRepository.save(root);
@@ -34,6 +40,7 @@ public class PostgresTreePersistenceService {
      * Agrega un hijo a un nodo padre existente.
      * Se usa parent_id para guardar la relación jerárquica.
      */
+    @Override
     public NodeEntity addChild(Long parentId, String name) {
         nodeRepository.findById(parentId)
                 .orElseThrow(() ->
@@ -82,6 +89,11 @@ public class PostgresTreePersistenceService {
      */
     public void deleteAllNodes() {
         nodeRepository.deleteAll();
+    }
+    
+    @Override
+    public Object getTree() {
+        return rebuildTree();
     }
     
     public PostgresTreeNodeDto rebuildTree() {

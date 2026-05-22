@@ -5,37 +5,39 @@ import edu.umg.programacion3.pfinal.api.generated.model.*;
 import edu.umg.programacion3.pfinal.treeengine.custom.CustomTreeNode;
 import edu.umg.programacion3.pfinal.treeengine.strategy.TreeAlgorithmStrategy;
 import org.springframework.web.bind.annotation.RestController;
+import edu.umg.programacion3.pfinal.persistence.service.TreePersistenceService;
 
 @RestController
 public class TreeController implements TreeApi {
 
-    private final TreeAlgorithmStrategy strategy;
+	private final TreeAlgorithmStrategy strategy;
+	private final TreePersistenceService persistenceService;
 
-    public TreeController(TreeAlgorithmStrategy strategy) {
-        this.strategy = strategy;
-    }
+	public TreeController(
+	        TreeAlgorithmStrategy strategy,
+	        TreePersistenceService persistenceService) {
+	    this.strategy = strategy;
+	    this.persistenceService = persistenceService;
+	}
 
     @Override
     public NodeResponse nodesRootPost(NodeRequest nodeRequest) {
-        strategy.createRoot(nodeRequest.getName());
-
-        CustomTreeNode root = (CustomTreeNode) strategy.getTree();
-
-        return toNodeResponse(root);
+    	Object root = persistenceService.createRoot(nodeRequest.getName());
+    	return toNodeResponse((CustomTreeNode) root);
     }
 
     @Override
     public NodeResponse nodesParentIdChildrenPost(Long parentId, NodeRequest nodeRequest) {
-        strategy.addChild(parentId, nodeRequest.getName());
+    	persistenceService.addChild(parentId, nodeRequest.getName());
 
-        return new NodeResponse()
-                .name(nodeRequest.getName())
-                .parentId(parentId);
+    	return new NodeResponse()
+    	        .name(nodeRequest.getName())
+    	        .parentId(parentId);
     }
 
     @Override
     public TreeNodeResponse treeGet() {
-        return toResponse((CustomTreeNode) strategy.getTree());
+    	return toResponse((CustomTreeNode) persistenceService.getTree());
     }
 
     @Override
