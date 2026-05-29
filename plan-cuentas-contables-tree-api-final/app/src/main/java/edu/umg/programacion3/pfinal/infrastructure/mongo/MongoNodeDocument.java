@@ -6,28 +6,32 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "nodes")
 public class MongoNodeDocument {
 
-    @Id
-    private String id;
+	@Id
+	private String mongoId;
 
-    private String value;
+	private Long id;
 
-    private String parentId;
+	private String value;
 
+	private Long parentId;
     public MongoNodeDocument() {
     }
 
-    public MongoNodeDocument(String value, String parentId) {
-        this.value = value;
-        this.parentId = parentId;
-    }
-
-    public MongoNodeDocument(String id, String value, String parentId) {
+    public MongoNodeDocument(Long id, String value, Long parentId) {
         this.id = id;
         this.value = value;
         this.parentId = parentId;
     }
+    
+    public String getMongoId() {
+        return mongoId;
+    }
 
-    public String getId() {
+    public void setMongoId(String mongoId) {
+        this.mongoId = mongoId;
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -35,11 +39,11 @@ public class MongoNodeDocument {
         return value;
     }
 
-    public String getParentId() {
+    public Long getParentId() {
         return parentId;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,7 +51,7 @@ public class MongoNodeDocument {
         this.value = value;
     }
 
-    public void setParentId(String parentId) {
+    public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
 }

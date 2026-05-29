@@ -7,7 +7,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface MongoNodeSpringRepository extends MongoRepository<MongoNodeDocument, String> {
 
-    List<MongoNodeDocument> findByParentId(String parentId);
+	Optional<MongoNodeDocument> findById(Long id);
+
+	List<MongoNodeDocument> findByParentId(Long parentId);
 
     Optional<MongoNodeDocument> findByParentIdIsNull();
 }
