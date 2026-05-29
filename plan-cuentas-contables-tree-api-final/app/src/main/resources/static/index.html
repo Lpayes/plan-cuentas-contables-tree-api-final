@@ -5,110 +5,152 @@
     <title>Árbol de Cuentas Contables</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f6f8;
-            color: #1f2937;
-        }
+		body {
+		    font-family: "Segoe UI", Arial, sans-serif;
+		    margin: 0;
+		    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+		    color: #111827;
+		}
 
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
+		header {
+		    background: linear-gradient(135deg, #1e3a8a, #111827);
+		    color: white;
+		    padding: 34px 20px;
+		    text-align: center;
+		    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+		}
 
-        main {
-            max-width: 1100px;
-            margin: 25px auto;
-            padding: 0 15px;
-        }
+		header h1 {
+		    margin: 0;
+		    font-size: 34px;
+		}
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+		header p {
+		    margin: 8px 0 0;
+		    opacity: 0.9;
+		}
 
-        section {
-            background: white;
-            padding: 18px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-        }
+		main {
+		    max-width: 1180px;
+		    margin: 28px auto;
+		    padding: 0 18px;
+		}
 
-        h2 {
-            margin-top: 0;
-            color: #111827;
-        }
+		.grid {
+		    display: grid;
+		    grid-template-columns: 1fr 1fr;
+		    gap: 18px;
+		}
 
-        input, button {
-            padding: 9px;
-            margin: 5px 3px;
-            border-radius: 6px;
-            border: 1px solid #bbb;
-        }
+		section {
+		    background: rgba(255,255,255,0.95);
+		    padding: 22px;
+		    margin-bottom: 18px;
+		    border-radius: 16px;
+		    border: 1px solid #e5e7eb;
+		    box-shadow: 0 8px 22px rgba(15,23,42,0.08);
+		}
 
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+		h2 {
+		    margin-top: 0;
+		    color: #0f172a;
+		    font-size: 24px;
+		}
 
-        button:hover {
-            background: #1d4ed8;
-        }
+		input {
+		    padding: 11px 12px;
+		    margin: 6px 6px 6px 0;
+		    border-radius: 10px;
+		    border: 1px solid #cbd5e1;
+		    min-width: 180px;
+		    outline: none;
+		}
 
-        .danger {
-            background: #dc2626;
-        }
+		input:focus {
+		    border-color: #2563eb;
+		    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+		}
 
-        .danger:hover {
-            background: #b91c1c;
-        }
+		button {
+		    padding: 11px 15px;
+		    margin: 6px 6px 6px 0;
+		    border-radius: 10px;
+		    background: #2563eb;
+		    color: white;
+		    border: none;
+		    cursor: pointer;
+		    font-weight: 600;
+		    transition: 0.2s;
+		}
 
-        pre {
-            background: #111827;
-            color: #e5e7eb;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            min-height: 160px;
-        }
+		button:hover {
+		    background: #1d4ed8;
+		    transform: translateY(-1px);
+		}
 
-        .status {
-            padding: 10px;
-            border-radius: 6px;
-            background: #e0f2fe;
-            color: #075985;
-            margin-bottom: 10px;
-        }
+		.danger {
+		    background: #dc2626;
+		}
 
-        .tree-view {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            white-space: pre-line;
-            font-family: Consolas, monospace;
-            border: 1px solid #ddd;
-        }
+		.danger:hover {
+		    background: #b91c1c;
+		}
 
-        footer {
-            text-align: center;
-            padding: 18px;
-            background: #1f2937;
-            color: white;
-            margin-top: 30px;
-        }
+		.status {
+		    padding: 13px 15px;
+		    border-radius: 10px;
+		    background: #dbeafe;
+		    color: #1e40af;
+		    border-left: 5px solid #2563eb;
+		    font-weight: 600;
+		}
 
-        @media (max-width: 800px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
+		pre {
+		    background: #020617;
+		    color: #e5e7eb;
+		    padding: 18px;
+		    border-radius: 14px;
+		    overflow-x: auto;
+		    min-height: 260px;
+		    font-size: 14px;
+		    line-height: 1.45;
+		}
+
+		.tree-view {
+		    background: #f8fafc;
+		    padding: 20px;
+		    border-radius: 14px;
+		    white-space: pre-line;
+		    font-family: Consolas, monospace;
+		    border: 1px solid #e5e7eb;
+		    min-height: 260px;
+		    font-size: 16px;
+		    line-height: 1.6;
+		}
+
+		code {
+		    background: #e5e7eb;
+		    padding: 3px 6px;
+		    border-radius: 6px;
+		}
+
+		footer {
+		    text-align: center;
+		    padding: 20px;
+		    background: #111827;
+		    color: white;
+		    margin-top: 35px;
+		}
+
+		@media (max-width: 800px) {
+		    .grid {
+		        grid-template-columns: 1fr;
+		    }
+
+		    header h1 {
+		        font-size: 26px;
+		    }
+		}
     </style>
 </head>
 
@@ -217,22 +259,63 @@
         setStatus("Pantalla limpia.");
     }
 
-    function renderTree(node, level = 0) {
-        if (!node) {
-            return "";
-        }
+	function renderTree(node, prefix = "", isLast = true) {
+	    if (!node) {
+	        return "";
+	    }
 
-        let indent = "   ".repeat(level);
-        let text = `${indent}📁 ${node.id} - ${node.name}\n`;
+	    let line = prefix;
 
-        if (node.children && node.children.length > 0) {
-            node.children.forEach(child => {
-                text += renderTree(child, level + 1);
-            });
-        }
+	    if (prefix !== "") {
+	        line += isLast ? "└── " : "├── ";
+	    }
 
-        return text;
-    }
+	    line += `📁 ${node.id} - ${node.name}\n`;
+
+	    let children = node.children || [];
+
+	    children.forEach((child, index) => {
+	        const childIsLast = index === children.length - 1;
+	        const nextPrefix = prefix + (prefix === "" ? "" : (isLast ? "    " : "│   "));
+	        const rootPrefix = prefix === "" ? "" : nextPrefix;
+
+	        if (prefix === "") {
+	            let connector = childIsLast ? "└── " : "├── ";
+	            line += renderTreeWithPrefix(child, connector, childIsLast, childIsLast ? "    " : "│   ");
+	        } else {
+	            line += renderTree(child, nextPrefix, childIsLast);
+	        }
+	    });
+
+	    return line;
+	}
+
+	function renderTreeWithPrefix(node, connector, isLast, childPrefix) {
+	    let text = `${connector}📁 ${node.id} - ${node.name}\n`;
+	    let children = node.children || [];
+
+	    children.forEach((child, index) => {
+	        const childIsLast = index === children.length - 1;
+	        const nextConnector = childIsLast ? "└── " : "├── ";
+	        const nextChildPrefix = childPrefix + (childIsLast ? "    " : "│   ");
+
+	        text += `${childPrefix}${nextConnector}📁 ${child.id} - ${child.name}\n`;
+
+	        if (child.children && child.children.length > 0) {
+	            child.children.forEach((grandChild, grandIndex) => {
+	                const grandIsLast = grandIndex === child.children.length - 1;
+	                text += renderTreeWithPrefix(
+	                    grandChild,
+	                    nextChildPrefix + (grandIsLast ? "└── " : "├── "),
+	                    grandIsLast,
+	                    nextChildPrefix + (grandIsLast ? "    " : "│   ")
+	                );
+	            });
+	        }
+	    });
+
+	    return text;
+	}
 
     async function request(url, options = {}) {
         try {
