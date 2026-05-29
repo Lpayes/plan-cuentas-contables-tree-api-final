@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Árbol de Cuentas Contables</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f6f8;
+        }
+
+        h1 {
+            color: #1f2937;
+        }
+
+        section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Árbol de Cuentas Contables</h1>
+
+<section>
+    <h2>Crear raíz</h2>
+    <input id="rootName" placeholder="Ej: 1 Activo">
+    <button onclick="createRoot()">Crear raíz</button>
+</section>
+
+<section>
+    <h2>Agregar hijo</h2>
+    <input id="parentId" placeholder="ID padre">
+    <input id="childName" placeholder="Ej: 1.1 Caja">
+    <button onclick="addChild()">Agregar hijo</button>
+</section>
+
+<section>
+    <h2>Consultas</h2>
+    <button onclick="getTree()">Ver árbol completo</button>
+    <button onclick="getDFS()">DFS</button>
+    <button onclick="getBFS()">BFS</button>
+    <button onclick="getHeight()">Altura</button>
+    <button onclick="validateTree()">Validar ciclos</button>
+</section>
+
+<section>
+    <h2>Consulta por nodo</h2>
+    <input id="nodeId" placeholder="ID nodo">
+    <button onclick="getSubtree()">Subárbol</button>
+    <button onclick="getPath()">Path</button>
+    <button onclick="getDepth()">Profundidad</button>
+    <button onclick="getAncestors()">Ancestros</button>
+</section>
+
+<section>
+    <h2>Respuesta</h2>
+    <pre id="output">Aquí aparecerán las respuestas de la API.</pre>
+</section>
+
+<script>
+    const API_URL = "http://localhost:8081";
+
+    function show(data) {
+        document.getElementById("output").textContent =
+            JSON.stringify(data, null, 2);
+    }
+
+    async function createRoot() {
+        const name = document.getElementById("rootName").value;
+
+        const response = await fetch(`${API_URL}/nodes/root`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name })
+        });
+
+        show(await response.json());
+    }
+
+    async function addChild() {
+        const parentId = document.getElementById("parentId").value;
+        const name = document.getElementById("childName").value;
+
+        const response = await fetch(`${API_URL}/nodes/${parentId}/children`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name })
+        });
+
+        show(await response.json());
+    }
+
+    async function getTree() {
+        const response = await fetch(`${API_URL}/tree`);
+        show(await response.json());
+    }
+
+    async function getSubtree() {
+        const nodeId = document.getElementById("nodeId").value;
+        const response = await fetch(`${API_URL}/tree/${nodeId}`);
+        show(await response.json());
+    }
+
+    async function getPath() {
+        const nodeId = document.getElementById("nodeId").value;
+        const response = await fetch(`${API_URL}/nodes/${nodeId}/path`);
+        show(await response.json());
+    }
+
+    async function getDFS() {
+        const response = await fetch(`${API_URL}/tree/traversal?type=DFS`);
+        show(await response.json());
+    }
+
+    async function getBFS() {
+        const response = await fetch(`${API_URL}/tree/traversal?type=BFS`);
+        show(await response.json());
+    }
+
+    async function getHeight() {
+        const response = await fetch(`${API_URL}/tree/height`);
+        show(await response.json());
+    }
+
+    async function getDepth() {
+        const nodeId = document.getElementById("nodeId").value;
+        const response = await fetch(`${API_URL}/nodes/${nodeId}/depth`);
+        show(await response.json());
+    }
+
+    async function getAncestors() {
+        const nodeId = document.getElementById("nodeId").value;
+        const response = await fetch(`${API_URL}/nodes/${nodeId}/ancestors`);
+        show(await response.json());
+    }
+
+    async function validateTree() {
+        const response = await fetch(`${API_URL}/tree/validate`);
+        show(await response.json());
+    }
+</script>
+
+</body>
+</html>
