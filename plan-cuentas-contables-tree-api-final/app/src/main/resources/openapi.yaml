@@ -260,7 +260,7 @@ components:
           type: integer
           format: int64
           nullable: true
-          example: null
+          example: 1
 
     TreeNodeResponse:
       type: object

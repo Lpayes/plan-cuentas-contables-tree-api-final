@@ -19,18 +19,24 @@ public class MongoTreeRepository {
     }
 
     public MongoNodeDocument createRoot(String value) {
-        MongoNodeDocument root = new MongoNodeDocument(value, null);
+        Long nextId = getNextId();
+
+        MongoNodeDocument root = new MongoNodeDocument(nextId, value, null);
         return mongoRepository.save(root);
     }
+    
 
-    public MongoNodeDocument addChild(String parentId, String value) {
+    public MongoNodeDocument addChild(Long parentId, String value) {
         mongoRepository.findById(parentId)
                 .orElseThrow(() ->
                         new RuntimeException("Nodo padre no encontrado: " + parentId));
 
-        MongoNodeDocument child = new MongoNodeDocument(value, parentId);
+        Long nextId = getNextId();
+
+        MongoNodeDocument child = new MongoNodeDocument(nextId, value, parentId);
         return mongoRepository.save(child);
     }
+    
 
     public MongoNodeDocument getRoot() {
         return mongoRepository.findByParentIdIsNull()
@@ -38,14 +44,14 @@ public class MongoTreeRepository {
                         new RuntimeException("No existe nodo raíz"));
     }
 
-    public MongoNodeDocument getNodeById(String id) {
+    public MongoNodeDocument getNodeById(Long id) {
         return mongoRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Nodo no encontrado: " + id));
     }
 
-    public List<MongoNodeDocument> getChildren(String parentId) {
-        return mongoRepository.findByParentId(parentId);
+    public List<MongoNodeDocument> getChildren(Long parentId) {
+    	 return mongoRepository.findByParentId(parentId);
     }
 
     public List<MongoNodeDocument> getAllNodes() {
@@ -55,4 +61,14 @@ public class MongoTreeRepository {
     public void deleteAllNodes() {
         mongoRepository.deleteAll();
     }
+    
+    private Long getNextId() {
+        return mongoRepository.findAll()
+                .stream()
+                .map(MongoNodeDocument::getId)
+                .filter(id -> id != null)
+                .max(Long::compareTo)
+                .orElse(0L) + 1;
+    }
+    
 }

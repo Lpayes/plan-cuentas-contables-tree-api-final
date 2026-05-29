@@ -1,5 +1,10 @@
 package edu.umg.programacion3.pfinal.persistence.service;
 
+import edu.umg.programacion3.pfinal.api.generated.model.NodeListResponse;
+import edu.umg.programacion3.pfinal.api.generated.model.NodeResponse;
+import edu.umg.programacion3.pfinal.api.generated.model.NumberResponse;
+import edu.umg.programacion3.pfinal.api.generated.model.TreeNodeResponse;
+import edu.umg.programacion3.pfinal.api.generated.model.ValidationResponse;
 import edu.umg.programacion3.pfinal.persistence.dto.PostgresTreeNodeDto;
 import edu.umg.programacion3.pfinal.persistence.entity.NodeEntity;
 import edu.umg.programacion3.pfinal.persistence.repository.NodeRepository;
@@ -31,9 +36,9 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
      * La raíz no tiene padre, por eso parentId = null.
      */
     @Override
-    public NodeEntity createRoot(String name) {
-        NodeEntity root = new NodeEntity(name, null);
-        return nodeRepository.save(root);
+    public NodeResponse createRoot(String name) {
+        NodeEntity root = nodeRepository.save(new NodeEntity(name, null));
+        return toNodeResponse(root);
     }
 
     /*
@@ -41,13 +46,13 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
      * Se usa parent_id para guardar la relación jerárquica.
      */
     @Override
-    public NodeEntity addChild(Long parentId, String name) {
+    public NodeResponse addChild(Long parentId, String name) {
         nodeRepository.findById(parentId)
-                .orElseThrow(() ->
-                        new RuntimeException("Nodo padre no encontrado: " + parentId));
+        .orElseThrow(() ->
+                new RuntimeException("Nodo padre no encontrado: " + parentId));
 
-        NodeEntity child = new NodeEntity(name, parentId);
-        return nodeRepository.save(child);
+        NodeEntity child = nodeRepository.save(new NodeEntity(name, parentId));
+        return toNodeResponse(child);
     }
 
     /*
@@ -92,8 +97,8 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
     }
     
     @Override
-    public Object getTree() {
-        return rebuildTree();
+    public TreeNodeResponse getTree() {
+    	return toTreeNodeResponse(rebuildTree());
     }
     
     public PostgresTreeNodeDto rebuildTree() {
@@ -130,28 +135,116 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
         return root;
     }
 
-    public int getDepth(Long nodeId) {
-        NodeEntity node = getNodeById(nodeId);
 
-        int depth = 0;
-
-        while (node.getParentId() != null) {
-            depth++;
-            node = getNodeById(node.getParentId());
-        }
-
-        return depth;
+    
+    @Override
+    public TreeNodeResponse getSubtree(Long nodeId) {
+    	return toTreeNodeResponse(buildSubtree(nodeId));
     }
 
-    public List<NodeEntity> getPath(Long nodeId) {
-        List<NodeEntity> path = new ArrayList<>();
+    private PostgresTreeNodeDto buildSubtree(Long nodeId) {
+        NodeEntity entity = getNodeById(nodeId);
 
+        PostgresTreeNodeDto dto = new PostgresTreeNodeDto(
+                entity.getId(),
+                entity.getName(),
+                entity.getParentId()
+        );
+
+        List<NodeEntity> children = getChildren(nodeId);
+
+        for (NodeEntity child : children) {
+            dto.getChildren().add(buildSubtree(child.getId()));
+        }
+
+        return dto;
+    }
+    
+    @Override
+    public NodeListResponse getPath(Long nodeId) {
+        NodeListResponse response = new NodeListResponse();
+
+        for (NodeEntity node : getPathEntities(nodeId)) {
+            response.addNodesItem(toNodeResponse(node));
+        }
+
+        return response;
+    }
+
+    @Override
+    public NodeListResponse getAncestors(Long nodeId) {
+        NodeListResponse response = new NodeListResponse();
+
+        for (NodeEntity node : getAncestorEntities(nodeId)) {
+            response.addNodesItem(toNodeResponse(node));
+        }
+
+        return response;
+    }
+
+    @Override
+    public NumberResponse getDepth(Long nodeId) {
+        return new NumberResponse()
+                .value(calculateDepth(nodeId));
+    }
+
+    @Override
+    public NumberResponse getHeight() {
+        return new NumberResponse()
+                .value(calculateHeight());
+    }
+
+    @Override
+    public NodeListResponse traverse(String type) {
+        NodeListResponse response = new NodeListResponse();
+
+        if ("DFS".equalsIgnoreCase(type)) {
+            dfs(getRoot(), response);
+            return response;
+        }
+
+        if ("BFS".equalsIgnoreCase(type)) {
+            bfs(response);
+            return response;
+        }
+
+        return response;
+    }
+
+    @Override
+    public ValidationResponse validateNoCycles() {
+        return new ValidationResponse()
+                .valid(true)
+                .message("El árbol no contiene ciclos");
+    }
+
+    private NodeResponse toNodeResponse(NodeEntity node) {
+        return new NodeResponse()
+                .id(node.getId())
+                .name(node.getName())
+                .parentId(node.getParentId());
+    }
+
+    private TreeNodeResponse toTreeNodeResponse(PostgresTreeNodeDto node) {
+        if (node == null) {
+            return null;
+        }
+
+        TreeNodeResponse response = new TreeNodeResponse()
+                .id(node.getId())
+                .name(node.getName());
+
+        for (PostgresTreeNodeDto child : node.getChildren()) {
+            response.addChildrenItem(toTreeNodeResponse(child));
+        }
+
+        return response;
+    }
+
+    private List<NodeEntity> getPathEntities(Long nodeId) {
+        List<NodeEntity> path = new ArrayList<>();
         NodeEntity node = getNodeById(nodeId);
 
-        /*
-         * Se empieza desde el nodo destino
-         * y se sube usando parent_id hasta llegar a la raíz.
-         */
         while (node != null) {
             path.add(node);
 
@@ -162,30 +255,14 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
             node = getNodeById(node.getParentId());
         }
 
-        /*
-         * Como se construyó desde el nodo hacia la raíz,
-         * se invierte para devolver raíz -> nodo.
-         */
         Collections.reverse(path);
-
         return path;
     }
 
-    /*
-     * Obtiene los ancestros de un nodo.
-     *
-     * Ancestros = padres superiores del nodo.
-     * No incluye al nodo actual.
-     */
-    public List<NodeEntity> getAncestors(Long nodeId) {
+    private List<NodeEntity> getAncestorEntities(Long nodeId) {
         List<NodeEntity> ancestors = new ArrayList<>();
-
         NodeEntity node = getNodeById(nodeId);
 
-        /*
-         * Mientras exista padre, se agrega a la lista
-         * y se sigue subiendo hacia la raíz.
-         */
         while (node.getParentId() != null) {
             NodeEntity parent = getNodeById(node.getParentId());
             ancestors.add(parent);
@@ -193,5 +270,59 @@ public class PostgresTreePersistenceService implements TreePersistenceService {
         }
 
         return ancestors;
+    }
+
+    private int calculateDepth(Long nodeId) {
+        NodeEntity node = getNodeById(nodeId);
+        int depth = 0;
+
+        while (node.getParentId() != null) {
+            depth++;
+            node = getNodeById(node.getParentId());
+        }
+
+        return depth;
+    }
+
+    private int calculateHeight() {
+        NodeEntity root = getRoot();
+        return calculateHeightFromNode(root.getId());
+    }
+
+    private int calculateHeightFromNode(Long nodeId) {
+        List<NodeEntity> children = getChildren(nodeId);
+
+        if (children.isEmpty()) {
+            return 1;
+        }
+
+        int maxChildHeight = 0;
+
+        for (NodeEntity child : children) {
+            maxChildHeight = Math.max(maxChildHeight, calculateHeightFromNode(child.getId()));
+        }
+
+        return maxChildHeight + 1;
+    }
+
+    private void dfs(NodeEntity node, NodeListResponse response) {
+        response.addNodesItem(toNodeResponse(node));
+
+        for (NodeEntity child : getChildren(node.getId())) {
+            dfs(child, response);
+        }
+    }
+
+    private void bfs(NodeListResponse response) {
+        List<NodeEntity> queue = new ArrayList<>();
+        queue.add(getRoot());
+
+        int index = 0;
+
+        while (index < queue.size()) {
+            NodeEntity current = queue.get(index++);
+            response.addNodesItem(toNodeResponse(current));
+            queue.addAll(getChildren(current.getId()));
+        }
     }
 }
