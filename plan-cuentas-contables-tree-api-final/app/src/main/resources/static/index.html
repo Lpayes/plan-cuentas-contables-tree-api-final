@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Árbol de Cuentas Contables</title>
+
+    <style>
+		body {
+		    font-family: "Segoe UI", Arial, sans-serif;
+		    margin: 0;
+		    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+		    color: #111827;
+		}
+
+		header {
+		    background: linear-gradient(135deg, #1e3a8a, #111827);
+		    color: white;
+		    padding: 34px 20px;
+		    text-align: center;
+		    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+		}
+
+		header h1 {
+		    margin: 0;
+		    font-size: 34px;
+		}
+
+		header p {
+		    margin: 8px 0 0;
+		    opacity: 0.9;
+		}
+
+		main {
+		    max-width: 1180px;
+		    margin: 28px auto;
+		    padding: 0 18px;
+		}
+
+		.grid {
+		    display: grid;
+		    grid-template-columns: 1fr 1fr;
+		    gap: 18px;
+		}
+
+		section {
+		    background: rgba(255,255,255,0.95);
+		    padding: 22px;
+		    margin-bottom: 18px;
+		    border-radius: 16px;
+		    border: 1px solid #e5e7eb;
+		    box-shadow: 0 8px 22px rgba(15,23,42,0.08);
+		}
+
+		h2 {
+		    margin-top: 0;
+		    color: #0f172a;
+		    font-size: 24px;
+		}
+
+		input {
+		    padding: 11px 12px;
+		    margin: 6px 6px 6px 0;
+		    border-radius: 10px;
+		    border: 1px solid #cbd5e1;
+		    min-width: 180px;
+		    outline: none;
+		}
+
+		input:focus {
+		    border-color: #2563eb;
+		    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+		}
+
+		button {
+		    padding: 11px 15px;
+		    margin: 6px 6px 6px 0;
+		    border-radius: 10px;
+		    background: #2563eb;
+		    color: white;
+		    border: none;
+		    cursor: pointer;
+		    font-weight: 600;
+		    transition: 0.2s;
+		}
+
+		button:hover {
+		    background: #1d4ed8;
+		    transform: translateY(-1px);
+		}
+
+		.danger {
+		    background: #dc2626;
+		}
+
+		.danger:hover {
+		    background: #b91c1c;
+		}
+
+		.status {
+		    padding: 13px 15px;
+		    border-radius: 10px;
+		    background: #dbeafe;
+		    color: #1e40af;
+		    border-left: 5px solid #2563eb;
+		    font-weight: 600;
+		}
+
+		pre {
+		    background: #020617;
+		    color: #e5e7eb;
+		    padding: 18px;
+		    border-radius: 14px;
+		    overflow-x: auto;
+		    min-height: 260px;
+		    font-size: 14px;
+		    line-height: 1.45;
+		}
+
+		.tree-view {
+		    background: #f8fafc;
+		    padding: 20px;
+		    border-radius: 14px;
+		    white-space: pre-line;
+		    font-family: Consolas, monospace;
+		    border: 1px solid #e5e7eb;
+		    min-height: 260px;
+		    font-size: 16px;
+		    line-height: 1.6;
+		}
+
+		code {
+		    background: #e5e7eb;
+		    padding: 3px 6px;
+		    border-radius: 6px;
+		}
+
+		footer {
+		    text-align: center;
+		    padding: 20px;
+		    background: #111827;
+		    color: white;
+		    margin-top: 35px;
+		}
+
+		@media (max-width: 800px) {
+		    .grid {
+		        grid-template-columns: 1fr;
+		    }
+
+		    header h1 {
+		        font-size: 26px;
+		    }
+		}
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Proyecto Final Programación 3</h1>
+    <p>Sistema de Gestión de Árbol de Cuentas Contables</p>
+    <p>Frontend de validación funcional - Semana 3</p>
+</header>
+
+<main>
+
+    <section>
+        <h2>Modo de ejecución</h2>
+        <p><strong>Servidor:</strong> http://localhost:8081</p>
+        <p><strong>Persistencia activa:</strong> se define en <code>app.storage</code></p>
+        <p><strong>Motor activo:</strong> se define en <code>app.tree-strategy</code></p>
+        <p>Este frontend funciona con Memory, PostgreSQL o MongoDB según la configuración activa.</p>
+    </section>
+
+    <div class="grid">
+        <section>
+            <h2>Crear raíz</h2>
+            <input id="rootName" placeholder="Ej: 1 Activo">
+            <button onclick="createRoot()">Crear raíz</button>
+        </section>
+
+        <section>
+            <h2>Agregar hijo</h2>
+            <input id="parentId" type="number" placeholder="ID padre">
+            <input id="childName" placeholder="Ej: 1.1 Caja">
+            <button onclick="addChild()">Agregar hijo</button>
+        </section>
+    </div>
+
+    <section>
+        <h2>Consultas generales</h2>
+        <button onclick="getTree()">Ver árbol completo</button>
+        <button onclick="getDFS()">DFS</button>
+        <button onclick="getBFS()">BFS</button>
+        <button onclick="getHeight()">Altura</button>
+        <button onclick="validateTree()">Validar ciclos</button>
+    </section>
+
+    <section>
+        <h2>Consultas por nodo</h2>
+        <input id="nodeId" type="number" placeholder="ID nodo">
+        <button onclick="getSubtree()">Subárbol</button>
+        <button onclick="getPath()">Path</button>
+        <button onclick="getDepth()">Profundidad</button>
+        <button onclick="getAncestors()">Ancestros</button>
+    </section>
+
+    <section>
+        <h2>Datos demo rápidos</h2>
+        <button onclick="createDemo()">Crear árbol demo</button>
+        <button class="danger" onclick="clearOutput()">Limpiar pantalla</button>
+    </section>
+
+    <section>
+        <h2>Estado</h2>
+        <div id="status" class="status">Listo para consumir la API.</div>
+    </section>
+
+    <div class="grid">
+        <section>
+            <h2>Respuesta JSON</h2>
+            <pre id="output">Aquí aparecerán las respuestas de la API.</pre>
+        </section>
+
+        <section>
+            <h2>Vista visual del árbol</h2>
+            <div id="treeVisual" class="tree-view">Aquí aparecerá el árbol visual.</div>
+        </section>
+    </div>
+
+</main>
+
+<footer>
+    Universidad Mariano Gálvez - Programación 3 - Proyecto Final
+</footer>
+
+<script>
+    const API_URL = "http://localhost:8081";
+
+    function setStatus(message) {
+        document.getElementById("status").textContent = message;
+    }
+
+    function show(data) {
+        document.getElementById("output").textContent =
+            JSON.stringify(data, null, 2);
+
+        if (data && data.id && data.children) {
+            document.getElementById("treeVisual").textContent =
+                renderTree(data);
+        }
+    }
+
+    function clearOutput() {
+        document.getElementById("output").textContent =
+            "Aquí aparecerán las respuestas de la API.";
+        document.getElementById("treeVisual").textContent =
+            "Aquí aparecerá el árbol visual.";
+        setStatus("Pantalla limpia.");
+    }
+
+	function renderTree(node, prefix = "", isLast = true) {
+	    if (!node) {
+	        return "";
+	    }
+
+	    let line = prefix;
+
+	    if (prefix !== "") {
+	        line += isLast ? "└── " : "├── ";
+	    }
+
+	    line += `📁 ${node.id} - ${node.name}\n`;
+
+	    let children = node.children || [];
+
+	    children.forEach((child, index) => {
+	        const childIsLast = index === children.length - 1;
+	        const nextPrefix = prefix + (prefix === "" ? "" : (isLast ? "    " : "│   "));
+	        const rootPrefix = prefix === "" ? "" : nextPrefix;
+
+	        if (prefix === "") {
+	            let connector = childIsLast ? "└── " : "├── ";
+	            line += renderTreeWithPrefix(child, connector, childIsLast, childIsLast ? "    " : "│   ");
+	        } else {
+	            line += renderTree(child, nextPrefix, childIsLast);
+	        }
+	    });
+
+	    return line;
+	}
+
+	function renderTreeWithPrefix(node, connector, isLast, childPrefix) {
+	    let text = `${connector}📁 ${node.id} - ${node.name}\n`;
+	    let children = node.children || [];
+
+	    children.forEach((child, index) => {
+	        const childIsLast = index === children.length - 1;
+	        const nextConnector = childIsLast ? "└── " : "├── ";
+	        const nextChildPrefix = childPrefix + (childIsLast ? "    " : "│   ");
+
+	        text += `${childPrefix}${nextConnector}📁 ${child.id} - ${child.name}\n`;
+
+	        if (child.children && child.children.length > 0) {
+	            child.children.forEach((grandChild, grandIndex) => {
+	                const grandIsLast = grandIndex === child.children.length - 1;
+	                text += renderTreeWithPrefix(
+	                    grandChild,
+	                    nextChildPrefix + (grandIsLast ? "└── " : "├── "),
+	                    grandIsLast,
+	                    nextChildPrefix + (grandIsLast ? "    " : "│   ")
+	                );
+	            });
+	        }
+	    });
+
+	    return text;
+	}
+
+    async function request(url, options = {}) {
+        try {
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                setStatus(`Error HTTP ${response.status}`);
+                const errorText = await response.text();
+                document.getElementById("output").textContent = errorText;
+                return;
+            }
+
+            const data = await response.json();
+            setStatus("Operación realizada correctamente.");
+            show(data);
+            return data;
+
+        } catch (error) {
+            setStatus("Error al conectar con la API.");
+            document.getElementById("output").textContent = error;
+        }
+    }
+
+    async function createRoot() {
+        const name = document.getElementById("rootName").value;
+
+        if (!name) {
+            setStatus("Debes ingresar el nombre de la raíz.");
+            return;
+        }
+
+        await request(`${API_URL}/nodes/root`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name })
+        });
+    }
+
+    async function addChild() {
+        const parentId = document.getElementById("parentId").value;
+        const name = document.getElementById("childName").value;
+
+        if (!parentId || !name) {
+            setStatus("Debes ingresar ID padre y nombre del hijo.");
+            return;
+        }
+
+        await request(`${API_URL}/nodes/${parentId}/children`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name })
+        });
+    }
+
+    async function getTree() {
+        const data = await request(`${API_URL}/tree`);
+
+        if (data) {
+            document.getElementById("treeVisual").textContent = renderTree(data);
+        }
+    }
+
+    async function getSubtree() {
+        const nodeId = document.getElementById("nodeId").value;
+
+        if (!nodeId) {
+            setStatus("Debes ingresar un ID de nodo.");
+            return;
+        }
+
+        const data = await request(`${API_URL}/tree/${nodeId}`);
+
+        if (data) {
+            document.getElementById("treeVisual").textContent = renderTree(data);
+        }
+    }
+
+    async function getPath() {
+        const nodeId = document.getElementById("nodeId").value;
+
+        if (!nodeId) {
+            setStatus("Debes ingresar un ID de nodo.");
+            return;
+        }
+
+        await request(`${API_URL}/nodes/${nodeId}/path`);
+    }
+
+    async function getDFS() {
+        await request(`${API_URL}/tree/traversal?type=DFS`);
+    }
+
+    async function getBFS() {
+        await request(`${API_URL}/tree/traversal?type=BFS`);
+    }
+
+    async function getHeight() {
+        await request(`${API_URL}/tree/height`);
+    }
+
+    async function getDepth() {
+        const nodeId = document.getElementById("nodeId").value;
+
+        if (!nodeId) {
+            setStatus("Debes ingresar un ID de nodo.");
+            return;
+        }
+
+        await request(`${API_URL}/nodes/${nodeId}/depth`);
+    }
+
+    async function getAncestors() {
+        const nodeId = document.getElementById("nodeId").value;
+
+        if (!nodeId) {
+            setStatus("Debes ingresar un ID de nodo.");
+            return;
+        }
+
+        await request(`${API_URL}/nodes/${nodeId}/ancestors`);
+    }
+
+    async function validateTree() {
+        await request(`${API_URL}/tree/validate`);
+    }
+
+    async function createDemo() {
+        setStatus("Creando árbol demo...");
+
+        await request(`${API_URL}/nodes/root`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name: "1 Activo" })
+        });
+
+        await request(`${API_URL}/nodes/1/children`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name: "1.1 Caja" })
+        });
+
+        await request(`${API_URL}/nodes/2/children`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name: "1.1.1 Caja General" })
+        });
+
+        await request(`${API_URL}/nodes/1/children`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ name: "1.2 Bancos" })
+        });
+
+        await getTree();
+        setStatus("Árbol demo creado correctamente.");
+    }
+</script>
+
+</body>
+</html>
