@@ -2,7 +2,6 @@ package edu.umg.programacion3.pfinal.persistence.service;
 
 import edu.umg.programacion3.pfinal.treeengine.custom.CustomTreeStrategy;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import edu.umg.programacion3.pfinal.api.generated.model.NodeListResponse;
 import edu.umg.programacion3.pfinal.api.generated.model.NodeResponse;
@@ -12,10 +11,6 @@ import edu.umg.programacion3.pfinal.api.generated.model.ValidationResponse;
 import edu.umg.programacion3.pfinal.treeengine.custom.CustomTreeNode;
 
 @Service
-@ConditionalOnProperty(
-        name = "app.storage",
-        havingValue = "memory"
-)
 public class MemoryTreePersistenceService implements TreePersistenceService {
 
     private final CustomTreeStrategy customTreeStrategy;
