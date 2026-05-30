@@ -8,8 +8,6 @@ import edu.umg.programacion3.pfinal.api.generated.model.ValidationResponse;
 import edu.umg.programacion3.pfinal.persistence.dto.PostgresTreeNodeDto;
 import edu.umg.programacion3.pfinal.persistence.entity.NodeEntity;
 import edu.umg.programacion3.pfinal.persistence.repository.NodeRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,11 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Profile("postgres")
-@ConditionalOnProperty(
-        name = "app.storage",
-        havingValue = "postgres"
-)
 public class PostgresTreePersistenceService implements TreePersistenceService {
 
     private final NodeRepository nodeRepository;

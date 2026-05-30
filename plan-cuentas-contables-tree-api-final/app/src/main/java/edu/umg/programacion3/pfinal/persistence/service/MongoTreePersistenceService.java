@@ -7,7 +7,6 @@ import edu.umg.programacion3.pfinal.api.generated.model.TreeNodeResponse;
 import edu.umg.programacion3.pfinal.api.generated.model.ValidationResponse;
 import edu.umg.programacion3.pfinal.infrastructure.mongo.MongoNodeDocument;
 import edu.umg.programacion3.pfinal.infrastructure.mongo.MongoTreeRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@ConditionalOnProperty(
-        name = "app.storage",
-        havingValue = "mongo"
-)
 public class MongoTreePersistenceService implements TreePersistenceService {
 
     private final MongoTreeRepository mongoTreeRepository;

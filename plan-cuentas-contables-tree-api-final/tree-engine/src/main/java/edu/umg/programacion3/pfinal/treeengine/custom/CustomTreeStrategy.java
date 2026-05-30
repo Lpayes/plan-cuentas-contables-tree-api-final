@@ -2,14 +2,9 @@ package edu.umg.programacion3.pfinal.treeengine.custom;
 
 import edu.umg.programacion3.pfinal.treeengine.memory.CustomMemoryTreeRepository;
 import edu.umg.programacion3.pfinal.treeengine.strategy.TreeAlgorithmStrategy;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-@ConditionalOnProperty(
-        name = "app.tree-strategy",
-        havingValue = "custom"
-)
+@Service
 public class CustomTreeStrategy implements TreeAlgorithmStrategy {
 
     // Uso el repositorio en memoria para guardar el árbol

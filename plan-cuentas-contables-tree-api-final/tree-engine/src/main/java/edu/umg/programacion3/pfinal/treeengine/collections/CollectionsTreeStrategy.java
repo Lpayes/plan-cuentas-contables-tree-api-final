@@ -1,7 +1,5 @@
 package edu.umg.programacion3.pfinal.treeengine.collections;
 import edu.umg.programacion3.pfinal.treeengine.strategy.TreeAlgorithmStrategy;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,12 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import org.springframework.stereotype.Service;
 
-@Component
-@ConditionalOnProperty(
-        name = "app.tree-strategy",
-        havingValue = "collections"
-)
+@Service
 public class CollectionsTreeStrategy implements TreeAlgorithmStrategy {
 
     /*
