@@ -1,3 +1,6 @@
+## TRELLO: https://trello.com/b/MJNbPlE6/plan-cuentas-tree-api
+
+
 # plan-cuentas-contables-tree-api-final
 API REST de estructura de árboles para plan de cuentas contable
 # Distribución de trabajo — Semana 1, 2 y 3
